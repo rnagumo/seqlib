@@ -23,27 +23,31 @@ class BaseSequentialVAE(nn.Module):
 
         return recon
 
-    def loss_func(self, x: Tensor, beta: float = 1.0) -> Dict[str, Tensor]:
+    def loss_func(self, x: Tensor, mask: Optional[Tensor] = None,
+                  beta: float = 1.0) -> Dict[str, Tensor]:
         """Loss function.
 
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
+            mask (torch.Tensor, optional): Sequence mask for valid data.
             beta (float, optional): Beta coefficient of KL term.
 
         Returns:
             loss_dict (dict of [str, torch.Tensor]): Dict of lossses.
         """
 
-        _, loss_dict = self.inference(x, beta)
+        _, loss_dict = self.inference(x, mask, beta)
 
         return loss_dict
 
-    def inference(self, x: Tensor, beta: float = 1.0
+    def inference(self, x: Tensor, mask: Optional[Tensor] = None,
+                  beta: float = 1.0
                   ) -> Tuple[Tuple[Tensor, ...], Dict[str, Tensor]]:
         """Inferences with given observations.
 
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
+            mask (torch.Tensor, optional): Sequence mask for valid data.
             beta (float, optional): Beta coefficient of KL term.
 
         Returns:
