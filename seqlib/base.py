@@ -5,7 +5,9 @@ from typing import Optional, Tuple, Dict
 
 import math
 
+import torch
 from torch import Tensor, nn
+from torch.nn import functional as F
 
 
 class BaseSequentialVAE(nn.Module):
@@ -84,14 +86,15 @@ def kl_divergence_normal(mu0: Tensor, var0: Tensor, mu1: Tensor, var1: Tensor,
     return kl
 
 
-def nll_normal(x: Tensor, mu: Tensor, var: Tensor, reduce: bool = True
-               ) -> Tensor:
-    """Negative log likelihood for 1-D Normal distribution.
+def nll_bernoulli(x: Tensor, probs: Tensor, reduce: bool = True) -> Tensor:
+    """Negative log likelihood for Bernoulli distribution.
+
+    Ref)
+    https://github.com/pytorch/pytorch/blob/master/torch/distributions/utils.py#L75
 
     Args:
         x (torch.Tensor): Inputs tensor, size `(*, dim)`.
-        mu (torch.Tensor): Mean vector, size `(*, dim)`.
-        var (torch.Tensor): Variance vector, size `(*, dim)`.
+        probs (torch.Tensor): Probability parameter, size `(*, dim)`.
         reduce (bool, optional): If `True`, sum calculated loss for each
             data point.
 
@@ -100,7 +103,9 @@ def nll_normal(x: Tensor, mu: Tensor, var: Tensor, reduce: bool = True
             `reduce` is `True`, `(*, dim)` otherwise.
     """
 
-    nll = 0.5 * ((2 * math.pi * var).log() + (x - mu) ** 2 / var)
+    probs = probs.clamp(min=1e-6, max=1 - 1e-6)
+    logits = torch.log(probs) - torch.log1p(-probs)
+    nll = -F.binary_cross_entropy_with_logits(logits, x, reduction="none")
 
     if reduce:
         return nll.sum(-1)
