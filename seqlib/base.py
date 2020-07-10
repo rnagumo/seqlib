@@ -6,7 +6,7 @@ from typing import Optional, Tuple, Dict
 from torch import Tensor, nn
 
 
-class BaseSequentialModel(nn.Module):
+class BaseSequentialVAE(nn.Module):
     """Base class for sequential model."""
 
     def forward(self, x: Tensor) -> Tensor:
