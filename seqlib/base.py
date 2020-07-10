@@ -90,6 +90,7 @@ def nll_bernoulli(x: Tensor, probs: Tensor, reduce: bool = True) -> Tensor:
     """Negative log likelihood for Bernoulli distribution.
 
     Ref)
+    https://pytorch.org/docs/stable/_modules/torch/distributions/bernoulli.html#Bernoulli
     https://github.com/pytorch/pytorch/blob/master/torch/distributions/utils.py#L75
 
     Args:
