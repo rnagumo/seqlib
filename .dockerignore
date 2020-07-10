@@ -1,0 +1,9 @@
+.mypy_cache/
+.pytest_cache/
+.venv/
+.vscode/
+data/
+seqlib.egg-info/
+logs/
+notes/
+__pycache__/
