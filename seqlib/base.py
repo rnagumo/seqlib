@@ -33,7 +33,8 @@ class BaseSequentialVAE(nn.Module):
 
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
-            mask (torch.Tensor, optional): Sequence mask for valid data.
+            mask (torch.Tensor, optional): Sequence mask for valid data with
+                binary values, size `(b, l)`.
             beta (float, optional): Beta coefficient of KL term.
 
         Returns:
