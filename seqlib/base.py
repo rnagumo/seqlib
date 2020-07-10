@@ -19,7 +19,7 @@ class BaseSequentialVAE(nn.Module):
             recon (torch.Tensor): Reconstructed observations.
         """
 
-        (recon, *_), _ = self.inference(x)
+        recon, *_ = self.sample(x)
 
         return recon
 
@@ -36,30 +36,10 @@ class BaseSequentialVAE(nn.Module):
             loss_dict (dict of [str, torch.Tensor]): Dict of lossses.
         """
 
-        _, loss_dict = self.inference(x, mask, beta)
-
-        return loss_dict
-
-    def inference(self, x: Tensor, mask: Optional[Tensor] = None,
-                  beta: float = 1.0
-                  ) -> Tuple[Tuple[Tensor, ...], Dict[str, Tensor]]:
-        """Inferences with given observations.
-
-        Args:
-            x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
-            mask (torch.Tensor, optional): Sequence mask for valid data.
-            beta (float, optional): Beta coefficient of KL term.
-
-        Returns:
-            data (tuple of torch.Tensor): Tuple of reconstructed observations
-                and latent variables. The first element of the tuple should be
-                recontstructed observations.
-            loss_dict (dict of [str, torch.Tensor]): Dict of lossses.
-        """
-
         raise NotImplementedError
 
-    def sample(self, x: Optional[Tensor] = None, time_step: int = 0) -> Tensor:
+    def sample(self, x: Optional[Tensor] = None, time_step: int = 0
+               ) -> Tuple[Tensor, ...]:
         """Reconstructs and samples observations.
 
         Args:
@@ -67,8 +47,8 @@ class BaseSequentialVAE(nn.Module):
             time_step (int, optional): Time step for prediction.
 
         Returns:
-            sample (torch.Tensor): Reconstructed and sampled observations, size
-                `(b, l + t, c, h, w)`.
+            samples (tuple of torch.Tensor): Tuple of reconstructed or sampled
+                data. The first element should be reconstructed observations.
         """
 
         raise NotImplementedError
