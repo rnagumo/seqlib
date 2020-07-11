@@ -1,7 +1,10 @@
 
-"""Recurrent State-Space model (RSSM).
+"""Recurrent State-Space Model (RSSM).
 
 RSSM is also known as Variational RNN.
+
+ref)
+* Chung+ 2015, "A Recurrent Latent Variable Model for Sequential Data"
 """
 
 from typing import Tuple, Optional, Dict

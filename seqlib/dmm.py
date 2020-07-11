@@ -1,5 +1,11 @@
 
-"""Deep Markov Model (DMM)."""
+"""Deep Markov Model (DMM).
+
+ref)
+* Krishnan+ 2015, "Deep Kalman Filters"
+* Krishnan+ 2016, "Structured Inference Networks for Nonlinear State Space
+    Models"
+"""
 
 from typing import Tuple, Optional, Dict
 
