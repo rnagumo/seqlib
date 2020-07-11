@@ -277,7 +277,12 @@ class Trainer:
     def save_plots(self) -> None:
         """Save reconstructed and sampled plots."""
 
-        def gridshow(img: Tensor):
+        def gridshow(img: Tensor) -> None:
+            if img.dim() == 4 and img.size(0) == 1:
+                img = img.squeeze(0)
+            elif img.dim() != 3:
+                raise ValueError(f"Wrong image size: {img.size()}")
+
             grid = make_grid(img)
             npgrid = grid.permute(1, 2, 0).numpy()
             plt.imshow(npgrid, interpolation="nearest")
