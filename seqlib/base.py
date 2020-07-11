@@ -133,7 +133,7 @@ def nll_bernoulli(x: Tensor, probs: Tensor, reduce: bool = True) -> Tensor:
 
     probs = probs.clamp(min=1e-6, max=1 - 1e-6)
     logits = torch.log(probs) - torch.log1p(-probs)
-    nll = -F.binary_cross_entropy_with_logits(logits, x, reduction="none")
+    nll = F.binary_cross_entropy_with_logits(logits, x, reduction="none")
 
     if reduce:
         return nll.sum(-1)
