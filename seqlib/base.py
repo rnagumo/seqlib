@@ -11,17 +11,18 @@ from torch.nn import functional as F
 class BaseSequentialVAE(nn.Module):
     """Base class for sequential model."""
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: Tensor, time_steps: int = 0) -> Tensor:
         """Forwards to reconstruct given data.
 
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
+            time_steps (int, optional): Time step for prediction.
 
         Returns:
             recon (torch.Tensor): Reconstructed observations.
         """
 
-        recon, *_ = self.sample(x)
+        recon, *_ = self.sample(x, time_steps)
 
         return recon
 
@@ -46,7 +47,8 @@ class BaseSequentialVAE(nn.Module):
         """Reconstructs and samples observations.
 
         Args:
-            x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
+            x (torch.Tensor, optional): Observation tensor, size
+                `(b, l, c, h, w)`.
             time_steps (int, optional): Time step for prediction.
             batch_size (int, optional): Batch size for samping, used if `x` is
                 `None`.

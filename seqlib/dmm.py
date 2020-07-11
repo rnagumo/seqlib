@@ -222,7 +222,8 @@ class DeepMarkovModel(BaseSequentialVAE):
         """Reconstructs and samples observations.
 
         Args:
-            x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
+            x (torch.Tensor, optional): Observation tensor, size
+                `(b, l, c, h, w)`.
             time_steps (int, optional): Time step for prediction.
             batch_size (int, optional): Batch size for samping, used when `x`
                 is `None`.
