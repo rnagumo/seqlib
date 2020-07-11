@@ -63,7 +63,7 @@ class TestRecurrentSSM(unittest.TestCase):
 
     def test_forward(self):
         x = torch.rand(8, 6, 3, 64, 64)
-        recon, h, z = self.model.sample(x)
+        recon = self.model(x)
 
         self.assertTupleEqual(recon.size(), x.size())
 
