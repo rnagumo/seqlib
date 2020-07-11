@@ -41,13 +41,13 @@ class BaseSequentialVAE(nn.Module):
 
         raise NotImplementedError
 
-    def sample(self, x: Optional[Tensor] = None, time_step: int = 0
+    def sample(self, x: Optional[Tensor] = None, time_steps: int = 0
                ) -> Tuple[Tensor, ...]:
         """Reconstructs and samples observations.
 
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
-            time_step (int, optional): Time step for prediction.
+            time_steps (int, optional): Time step for prediction.
 
         Returns:
             samples (tuple of torch.Tensor): Tuple of reconstructed or sampled
