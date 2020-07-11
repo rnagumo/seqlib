@@ -54,6 +54,9 @@ class BaseSequentialVAE(nn.Module):
         Returns:
             samples (tuple of torch.Tensor): Tuple of reconstructed or sampled
                 data. The first element should be reconstructed observations.
+
+        Raises:
+            ValueError: If `x` is `None` and `time_steps` is non positive.
         """
 
         raise NotImplementedError
