@@ -240,7 +240,8 @@ class DeepMarkovModel(BaseSequentialVAE):
             recon_len = 0
 
             # Dummy input
-            x = torch.rand(batch, 1, self.x_channels, 64, 64)
+            x = torch.rand(batch, 1, self.x_channels, 64, 64,
+                           device=self.device)
 
         # Total sequence length (reconstruction and sample)
         seq_len = recon_len + time_steps

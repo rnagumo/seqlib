@@ -62,6 +62,9 @@ class TestDeepMarkovModel(unittest.TestCase):
 
         self.assertTupleEqual(recon.size(), x.size())
 
+    def test_device(self):
+        self.assertTrue(self.model.device, torch.device("cpu"))
+
 
 if __name__ == "__main__":
     unittest.main()
