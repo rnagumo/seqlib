@@ -278,9 +278,9 @@ class Trainer:
         """Save reconstructed and sampled plots."""
 
         def gridshow(img: Tensor) -> None:
-            if img.dim() == 4 and img.size(0) == 1:
-                img = img.squeeze(0)
-            elif img.dim() != 3:
+            if img.dim() == 5 and img.size(1) == 1:
+                img = img.squeeze(1)
+            elif img.dim() != 4:
                 raise ValueError(f"Wrong image size: {img.size()}")
 
             grid = make_grid(img)
