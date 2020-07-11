@@ -48,8 +48,8 @@ class BaseSequentialVAE(nn.Module):
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
             time_steps (int, optional): Time step for prediction.
-            batch_size (int, optional): Batch size for samping, used when `x`
-                is `None`.
+            batch_size (int, optional): Batch size for samping, used if `x` is
+                `None`.
 
         Returns:
             samples (tuple of torch.Tensor): Tuple of reconstructed or sampled
