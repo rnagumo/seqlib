@@ -41,7 +41,7 @@ class BaseSequentialVAE(nn.Module):
 
         raise NotImplementedError
 
-    def sample(self, x: Optional[Tensor] = None, time_steps: int = 0,
+    def sample(self, x: Optional[Tensor] = None, time_steps: int = 1,
                batch_size: int = 1) -> Tuple[Tensor, ...]:
         """Reconstructs and samples observations.
 
