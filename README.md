@@ -64,6 +64,13 @@ bash bin/train.sh <model-name>
 bash bin/train.sh rssm
 ```
 
+# Results
+
+|Model|Results|
+|:-:|:-:|
+|Recurrent State Space Model|![rssm](./images/rssm_seqmnist.png)|
+|Deep Markov Model|![dmm](./images/dmm_seqmnist.png)|
+
 # Example code
 
 ## Training
