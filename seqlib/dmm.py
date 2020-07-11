@@ -144,11 +144,11 @@ class DeepMarkovModel(BaseSequentialVAE):
     """Deep Markov Model (DMM).
 
     Args:
-        x_channels (int): Channel number of observations.
-        z_dim (int): Dimension size of latent states.
+        x_channels (int, optional): Channel number of observations.
+        z_dim (int, optional): Dimension size of latent states.
     """
 
-    def __init__(self, x_channels: int, z_dim: int):
+    def __init__(self, x_channels: int = 3, z_dim: int = 10):
         super().__init__()
 
         self.x_channels = x_channels

@@ -184,12 +184,12 @@ class RecurrentSSM(BaseSequentialVAE):
     """Recurrent State-Space model (RSSM).
 
     Args:
-        x_channels (int): Channel number of observations.
-        h_dim (int): Dimension size of hidden states.
-        z_dim (int): Dimension size of latent states.
+        x_channels (int, optional): Channel number of observations.
+        h_dim (int, optional): Dimension size of hidden states.
+        z_dim (int, optional): Dimension size of latent states.
     """
 
-    def __init__(self, x_channels: int, h_dim: int, z_dim: int):
+    def __init__(self, x_channels: int = 3, h_dim: int = 10, z_dim: int = 10):
         super().__init__()
 
         self.x_channels = x_channels
