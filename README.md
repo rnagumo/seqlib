@@ -46,9 +46,10 @@ docker build -t seqlib .
 docker run -it seqlib bash
 ```
 
-You can run container with GPUs by Docker 19.03.
+You can run container with GPUs by Docker 19.03+.
 
 ```bash
+docker build -t seqlib .
 docker run --gpus all -it seqlib bash
 ```
 
