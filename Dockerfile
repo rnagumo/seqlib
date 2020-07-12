@@ -15,6 +15,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY bin/ bin/
 COPY examples/ examples/
+COPY images/ images/
 COPY seqlib/ seqlib/
 COPY tests/ tests/
 COPY setup.py setup.py
@@ -24,5 +25,5 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -e .
 
 # Install other requirements for examples
-RUN pip3 install --no-cache-dir matplotlib==3.2.2 torchvision==0.6.1 \
-        tqdm==4.46.1  tensorboardX==2.0
+RUN pip3 install --no-cache-dir matplotlib==3.2.2 tqdm==4.46.1 \
+        tensorboardX==2.0
