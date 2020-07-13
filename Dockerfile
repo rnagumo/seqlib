@@ -23,7 +23,3 @@ COPY setup.py setup.py
 # Install package
 RUN pip3 install --upgrade pip
 RUN pip3 install -e .
-
-# Install other requirements for examples
-RUN pip3 install --no-cache-dir matplotlib==3.2.2 tqdm==4.46.1 \
-        tensorboardX==2.0
