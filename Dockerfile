@@ -15,7 +15,6 @@ RUN apt-get update \
 WORKDIR /app
 COPY bin/ bin/
 COPY examples/ examples/
-COPY images/ images/
 COPY seqlib/ seqlib/
 COPY tests/ tests/
 COPY setup.py setup.py

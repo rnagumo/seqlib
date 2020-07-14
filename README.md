@@ -8,6 +8,7 @@
 * Python == 3.7
 * PyTorch == 1.5.1
 * torchvision == 0.6.1
+* scikit-learn == 0.23.1
 
 Additional requirements for example codes.
 
