@@ -2,11 +2,15 @@
     "rssm_params": {
         "x_channels": 3,
         "h_dim": 32,
-        "z_dim": 10
+        "z_dim": 10,
+        "beta": 10.0,
+        "do_anneal": false
     },
     "dmm_params": {
         "x_channels": 3,
-        "z_dim": 10
+        "z_dim": 10,
+        "beta": 1.0,
+        "do_anneal": false
     },
     "dataset_params": {
         "data_num": 1000,

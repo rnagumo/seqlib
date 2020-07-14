@@ -190,10 +190,16 @@ class RecurrentSSM(BaseSequentialVAE):
         x_channels (int, optional): Channel number of observations.
         h_dim (int, optional): Dimension size of hidden states.
         z_dim (int, optional): Dimension size of latent states.
+        beta (float, optional): Beta coefficient of KL term.
+        do_anneal (bool, optional): If `True`, beta is given from kwargs.
     """
 
-    def __init__(self, x_channels: int = 3, h_dim: int = 10, z_dim: int = 10):
+    def __init__(self, x_channels: int = 3, h_dim: int = 10, z_dim: int = 10,
+                 beta: float = 10.0, do_anneal: bool = False):
         super().__init__()
+
+        self.beta = beta
+        self.do_anneal = do_anneal
 
         self.transition = Transition(h_dim, z_dim)
         self.prior = StochasticPrior(h_dim, z_dim)
@@ -259,7 +265,7 @@ class RecurrentSSM(BaseSequentialVAE):
             kl_loss += _kl_loss_t
 
         # Multiply beta coefficient
-        kl_loss *= beta
+        kl_loss *= beta if self.do_anneal else self.beta
 
         # Returned loss dict
         loss_dict = {"loss": (nll_loss + kl_loss).mean(),
