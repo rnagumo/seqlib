@@ -12,7 +12,7 @@
         "data_num": 1000,
         "seq_len": 20,
         "color": true,
-        "path_lena": "./images/lena_color.gif"
+        "image_name": "china.jpg"
     },
     "optimizer_params": {},
     "max_grad_value": 5.0,
