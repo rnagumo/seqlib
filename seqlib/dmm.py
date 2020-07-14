@@ -157,12 +157,12 @@ class DeepMarkovModel(BaseSequentialVAE):
     def __init__(self, x_channels: int = 3, z_dim: int = 10):
         super().__init__()
 
-        self.x_channels = x_channels
-        self.z_dim = z_dim
-
         self.prior = StochasticPrior(z_dim)
         self.decoder = Generator(x_channels, z_dim)
         self.encoder = Inference(x_channels, z_dim)
+
+        # Initial state
+        self.register_buffer("z_0", torch.zeros(1, z_dim))
 
     def loss_func(self, x: Tensor, mask: Optional[Tensor] = None,
                   beta: float = 1.0) -> Dict[str, Tensor]:
@@ -182,7 +182,7 @@ class DeepMarkovModel(BaseSequentialVAE):
         batch, seq_len, *_ = x.size()
 
         # Initial parameter
-        z_t = x.new_zeros((batch, self.z_dim))
+        z_t = self.z_0.repeat(batch, 1)
 
         # Losses
         nll_loss = x.new_zeros((batch,))
@@ -249,10 +249,6 @@ class DeepMarkovModel(BaseSequentialVAE):
             batch = batch_size
             recon_len = 0
 
-            # Dummy input
-            x = torch.rand(batch, 1, self.x_channels, 64, 64,
-                           device=self.device)
-
         # Total sequence length (reconstruction and sample)
         seq_len = recon_len + time_steps
 
@@ -261,7 +257,7 @@ class DeepMarkovModel(BaseSequentialVAE):
                 f"Sequence length must be positive, but given {seq_len}")
 
         # Initial parameter
-        z_t = x.new_zeros((batch, self.z_dim))
+        z_t = self.z_0.repeat(batch, 1)
 
         # Sampled data
         recon_list = []
