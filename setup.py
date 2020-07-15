@@ -5,6 +5,7 @@ from setuptools import setup, find_packages
 install_requires = [
     "torch==1.5.1",
     "torchvision==0.6.1",
+    "scikit-learn==0.23.1",
 ]
 
 

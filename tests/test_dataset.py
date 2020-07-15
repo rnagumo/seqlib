@@ -28,7 +28,6 @@ class TestSequentialMNIST(unittest.TestCase):
         seq_len = 10
         dataset = seqlib.SequentialMNIST(
             data_num=data_num, seq_len=seq_len, color=True,
-            path_lena="../images/lena_color.gif",
             root="../data/mnist", train=True, download=False)
 
         # Getitem

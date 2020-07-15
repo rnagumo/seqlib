@@ -9,6 +9,8 @@ from typing import List, Tuple
 
 from PIL import Image
 
+from sklearn.datasets import load_sample_image
+
 import torch
 from torch import Tensor
 from torchvision import datasets, transforms
@@ -23,14 +25,14 @@ class SequentialMNIST(datasets.MNIST):
         data_num (int): Number of sequences.
         seq_len (int): Length of each sequence.
         color (bool, optional): If `True`, coloring pixels.
-        path_lena (str, optional): Path to Lena image used for coloring.
+        image_name (str, optional): Background image name for coloring.
 
     Attributes:
         indices (torch.Tensor): Indices for sequences.
     """
 
     def __init__(self, data_num: int, seq_len: int, color: bool = False,
-                 path_lena: str = "", **kwargs):
+                 image_name: str = "china.jpg", **kwargs):
         super().__init__(**kwargs)
 
         self.data_num = data_num
@@ -38,33 +40,33 @@ class SequentialMNIST(datasets.MNIST):
         self.color = color
 
         # Preprocess all MNIST data
-        self._preprocess_data(path_lena)
+        self._preprocess_data(image_name)
 
         # Generate indices for sequences
         self.indices = torch.tensor(
             [self._generate_indices() for _ in range(data_num)])
 
-    def _preprocess_data(self, path_lena: str) -> None:
+    def _preprocess_data(self, image_name: str) -> None:
         """Initialize data.
 
         * Convert images to tensor.
         * Modify color distribution.
 
         Args:
-            path_lena (str): Path to lena image used for coloring.
+            image_name (str): Background image name for coloring.
         """
 
         # Transform for MNIST image
         _transform = transforms.Compose(
             [transforms.Resize(64), transforms.ToTensor()])
 
-        # Transform for Lena image
-        _transform_lena = transforms.Compose(
+        # Transform for background image
+        _transform_background = transforms.Compose(
             [transforms.RandomCrop(64), transforms.ToTensor()])
 
-        # Load lena image if necessary
+        # Load background image if necessary
         if self.color:
-            lena_image = Image.open(path_lena).convert("RGB")
+            background_image = Image.fromarray(load_sample_image(image_name))
 
         # Convert images to tensor
         data_list = []
@@ -82,8 +84,8 @@ class SequentialMNIST(datasets.MNIST):
                 img[img >= 0.5] = 1.0
                 img[img < 0.5] = 0.0
 
-                # Image to tensor
-                color_img = _transform_lena(lena_image)
+                # Random crop of background image
+                color_img = _transform_background(background_image)
 
                 # Randomly alter color distribution
                 color_img = (color_img + torch.rand(3, 1, 1)) / 2

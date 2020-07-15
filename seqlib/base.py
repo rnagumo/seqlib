@@ -63,27 +63,6 @@ class BaseSequentialVAE(nn.Module):
 
         raise NotImplementedError
 
-    @property
-    def device(self) -> torch.device:
-        """Device property of this model.
-
-        Returns:
-            device (torch.device): Device information.
-
-        Raises:
-            RuntimeError: If device cannot be determined.
-        """
-
-        devices = (set(param.device for param in self.parameters())
-                   | set(buf.device for buf in self.buffers()))
-
-        if len(devices) != 1:
-            raise RuntimeError(
-                    f"Device cannot be determined: {len(devices)} "
-                    "different devices found.")
-
-        return next(iter(devices))
-
 
 def kl_divergence_normal(mu0: Tensor, var0: Tensor, mu1: Tensor, var1: Tensor,
                          reduce: bool = True) -> Tensor:

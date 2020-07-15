@@ -190,19 +190,25 @@ class RecurrentSSM(BaseSequentialVAE):
         x_channels (int, optional): Channel number of observations.
         h_dim (int, optional): Dimension size of hidden states.
         z_dim (int, optional): Dimension size of latent states.
+        beta (float, optional): Beta coefficient of KL term.
+        do_anneal (bool, optional): If `True`, beta is given from kwargs.
     """
 
-    def __init__(self, x_channels: int = 3, h_dim: int = 10, z_dim: int = 10):
+    def __init__(self, x_channels: int = 3, h_dim: int = 10, z_dim: int = 10,
+                 beta: float = 10.0, do_anneal: bool = False):
         super().__init__()
 
-        self.x_channels = x_channels
-        self.h_dim = h_dim
-        self.z_dim = z_dim
+        self.beta = beta
+        self.do_anneal = do_anneal
 
         self.transition = Transition(h_dim, z_dim)
         self.prior = StochasticPrior(h_dim, z_dim)
         self.decoder = Generator(x_channels, h_dim, z_dim)
         self.encoder = Inference(x_channels, h_dim, z_dim)
+
+        # Initial state
+        self.register_buffer("h_0", torch.zeros(1, h_dim))
+        self.register_buffer("z_0", torch.zeros(1, z_dim))
 
     def loss_func(self, x: Tensor, mask: Optional[Tensor] = None,
                   beta: float = 1.0) -> Dict[str, Tensor]:
@@ -222,8 +228,8 @@ class RecurrentSSM(BaseSequentialVAE):
         batch, seq_len, *_ = x.size()
 
         # Initial parameter
-        h_t = x.new_zeros((batch, self.h_dim))
-        z_t = x.new_zeros((batch, self.z_dim))
+        h_t = self.h_0.repeat(batch, 1)
+        z_t = self.z_0.repeat(batch, 1)
 
         # Losses
         nll_loss = x.new_zeros((batch,))
@@ -259,7 +265,7 @@ class RecurrentSSM(BaseSequentialVAE):
             kl_loss += _kl_loss_t
 
         # Multiply beta coefficient
-        kl_loss *= beta
+        kl_loss *= beta if self.do_anneal else self.beta
 
         # Returned loss dict
         loss_dict = {"loss": (nll_loss + kl_loss).mean(),
@@ -293,10 +299,6 @@ class RecurrentSSM(BaseSequentialVAE):
             batch = batch_size
             recon_len = 0
 
-            # Dummy input
-            x = torch.rand(batch, 1, self.x_channels, 64, 64,
-                           device=self.device)
-
         # Total sequence length (reconstruction and sample)
         seq_len = recon_len + time_steps
 
@@ -305,8 +307,8 @@ class RecurrentSSM(BaseSequentialVAE):
                 f"Sequence length must be positive, but given {seq_len}")
 
         # Initial parameter
-        h_t = x.new_zeros((batch, self.h_dim))
-        z_t = x.new_zeros((batch, self.z_dim))
+        h_t = self.h_0.repeat(batch, 1)
+        z_t = self.z_0.repeat(batch, 1)
 
         # Sampled data
         recon_list = []
