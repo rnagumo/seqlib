@@ -9,7 +9,7 @@
     "dmm_params": {
         "x_channels": 3,
         "z_dim": 10,
-        "beta": 1.0,
+        "beta": 2.0,
         "do_anneal": false
     },
     "dataset_params": {
