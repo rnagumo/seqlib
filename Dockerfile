@@ -21,4 +21,4 @@ COPY setup.py setup.py
 
 # Install package
 RUN pip3 install --upgrade pip
-RUN pip3 install -e .
+RUN pip3 install -e ".[example]"
