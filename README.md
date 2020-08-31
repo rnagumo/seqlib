@@ -5,16 +5,16 @@
 
 # Requirements
 
-* Python == 3.7
-* PyTorch == 1.5.1
-* torchvision == 0.6.1
-* scikit-learn == 0.23.1
+* Python >= 3.7
+* PyTorch >= 1.6
+* torchvision >= 0.7
+* scikit-learn >= 0.23
 
 Additional requirements for example codes.
 
-* matplotlib == 3.2.2
-* tqdm == 4.46.1
-* tensorboardX == 2.0
+* matplotlib >= 3.2
+* tqdm >= 4.47
+* tensorboardX >= 2.1
 
 # Setup
 
@@ -44,7 +44,7 @@ docker run --gpus all -it seqlib bash
 Install other requirements for example code.
 
 ```bash
-pip3 install matplotlib==3.2.2 tqdm==4.46.1  tensorboardX==2.0
+pip3 install ".[example]"
 ```
 
 # Experiment
