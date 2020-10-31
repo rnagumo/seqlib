@@ -1,5 +1,3 @@
-"""Base class for sequential class."""
-
 from typing import Optional, Tuple, Dict
 
 import torch
@@ -32,8 +30,8 @@ class BaseSequentialVAE(nn.Module):
 
         Args:
             x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
-            mask (torch.Tensor, optional): Sequence mask for valid data with
-                binary values, size `(b, l)`.
+            mask (torch.Tensor, optional): Sequence mask for valid data with binary values, size
+                `(b, l)`.
             beta (float, optional): Beta coefficient of KL term.
 
         Returns:
@@ -48,15 +46,13 @@ class BaseSequentialVAE(nn.Module):
         """Reconstructs and samples observations.
 
         Args:
-            x (torch.Tensor, optional): Observation tensor, size
-                `(b, l, c, h, w)`.
+            x (torch.Tensor, optional): Observation tensor, size `(b, l, c, h, w)`.
             time_steps (int, optional): Time step for prediction.
-            batch_size (int, optional): Batch size for samping, used if `x` is
-                `None`.
+            batch_size (int, optional): Batch size for samping, used if `x` is `None`.
 
         Returns:
-            samples (tuple of torch.Tensor): Tuple of reconstructed or sampled
-                data. The first element should be reconstructed observations.
+            samples (tuple of torch.Tensor): Tuple of reconstructed or sampled data. The first
+                element should be reconstructed observations.
 
         Raises:
             ValueError: If `x` is `None` and `time_steps` is non positive.
@@ -79,8 +75,7 @@ def kl_divergence_normal(
         var0 (torch.Tensor): Diagonal variance of p.
         mu1 (torch.Tensor): Mean vector of q.
         var1 (torch.Tensor): Diagonal variance of q.
-        reduce (bool, optional): If `True`, sum calculated loss for each
-            data point.
+        reduce (bool, optional): If `True`, sum calculated loss for each data point.
 
     Returns:
         kl (torch.Tensor): Calculated kl divergence for each data.
@@ -104,12 +99,11 @@ def nll_bernoulli(x: Tensor, probs: Tensor, reduce: bool = True) -> Tensor:
     Args:
         x (torch.Tensor): Inputs tensor, size `(*, dim)`.
         probs (torch.Tensor): Probability parameter, size `(*, dim)`.
-        reduce (bool, optional): If `True`, sum calculated loss for each
-            data point.
+        reduce (bool, optional): If `True`, sum calculated loss for each data point.
 
     Returns:
-        nll (torch.Tensor): Calculated nll for each data, size `(*,)` if
-            `reduce` is `True`, `(*, dim)` otherwise.
+        nll (torch.Tensor): Calculated nll for each data, size `(*,)` if `reduce` is `True`,
+            `(*, dim)` otherwise.
     """
 
     probs = probs.clamp(min=1e-6, max=1 - 1e-6)

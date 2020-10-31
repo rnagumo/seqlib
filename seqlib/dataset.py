@@ -44,10 +44,7 @@ class SequentialMNIST(datasets.MNIST):
         self.seq_len = seq_len
         self.color = color
 
-        # Preprocess all MNIST data
         self._preprocess_data(image_name)
-
-        # Generate indices for sequences
         self.indices = torch.tensor([self._generate_indices() for _ in range(data_num)])
 
     def _preprocess_data(self, image_name: str) -> None:
@@ -55,27 +52,18 @@ class SequentialMNIST(datasets.MNIST):
 
         * Convert images to tensor.
         * Modify color distribution.
-
-        Args:
-            image_name (str): Background image name for coloring.
         """
 
-        # Transform for MNIST image
         _transform = transforms.Compose([transforms.Resize(64), transforms.ToTensor()])
-
-        # Transform for background image
         _transform_background = transforms.Compose(
             [transforms.RandomCrop(64), transforms.ToTensor()]
         )
 
-        # Load background image if necessary
         if self.color:
             background_image = Image.fromarray(load_sample_image(image_name))
 
-        # Convert images to tensor
         data_list = []
         for img in self.data:
-            # Image to tensor
             img = Image.fromarray(img.numpy(), mode="L")
             img = _transform(img)
 
@@ -84,46 +72,28 @@ class SequentialMNIST(datasets.MNIST):
 
             # Modify color distribution of images
             if self.color:
-                # Binarize image
                 img[img >= 0.5] = 1.0
                 img[img < 0.5] = 0.0
 
-                # Random crop of background image
                 color_img = _transform_background(background_image)
-
-                # Randomly alter color distribution
                 color_img = (color_img + torch.rand(3, 1, 1)) / 2
-
-                # Invert color of pixels at number
                 color_img[img == 1] = 1 - color_img[img == 1]
                 img = color_img
 
-            # Add to data list
             data_list.append(img)
 
-        # Conver list to tensor: (b, h, w)
         self.data = torch.stack(data_list)
 
     def _generate_indices(self) -> List[int]:
-        """Generates indices for 1 sequence.
 
-        Returns:
-            indices (list of int): Indices of images.
-        """
-
-        # Current number
         n = torch.randint(0, 10, (1,)).item()
-
         indices = []
         for _ in range(self.seq_len):
-            # Sample random index of specified number
             t, *_ = torch.where(self.targets == n)
             idx = t[torch.multinomial(t.float(), 1)].item()
-
             assert isinstance(idx, int)
             indices.append(idx)
 
-            # Go to next number
             n = (n + 1) % 10
 
         return indices

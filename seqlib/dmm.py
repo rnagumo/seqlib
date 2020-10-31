@@ -2,8 +2,7 @@
 
 ref)
 * Krishnan+ 2015, "Deep Kalman Filters"
-* Krishnan+ 2016, "Structured Inference Networks for Nonlinear State Space
-    Models"
+* Krishnan+ 2016, "Structured Inference Networks for Nonlinear State Space Models"
 """
 
 from typing import Tuple, Optional, Dict
@@ -167,32 +166,16 @@ class DeepMarkovModel(BaseSequentialVAE):
         self.decoder = Generator(x_channels, z_dim)
         self.encoder = Inference(x_channels, z_dim)
 
-        # Initial state
         self.z_0: Tensor
         self.register_buffer("z_0", torch.zeros(1, z_dim))
 
     def loss_func(
         self, x: Tensor, mask: Optional[Tensor] = None, beta: float = 1.0
     ) -> Dict[str, Tensor]:
-        """Loss function.
 
-        Args:
-            x (torch.Tensor): Observation tensor, size `(b, l, c, h, w)`.
-            mask (torch.Tensor, optional): Sequence mask for valid data with
-                binary values, size `(b, l)`.
-            beta (float, optional): Beta coefficient of KL term.
-
-        Returns:
-            loss_dict (dict of [str, torch.Tensor]): Dict of lossses.
-        """
-
-        # Data size
         batch, seq_len, *_ = x.size()
-
-        # Initial parameter
         z_t = self.z_0.repeat(batch, 1)
 
-        # Losses
         nll_loss = x.new_zeros((batch,))
         kl_loss = x.new_zeros((batch,))
 
@@ -206,7 +189,6 @@ class DeepMarkovModel(BaseSequentialVAE):
             # 2. Decode observations
             recon = self.decoder(z_t)
 
-            # Calculate loss
             _nll_loss_t = nll_bernoulli(x[:, t], recon, reduce=False)
             _nll_loss_t = _nll_loss_t.sum(dim=[1, 2, 3])
 
@@ -214,19 +196,14 @@ class DeepMarkovModel(BaseSequentialVAE):
                 q_z_t_mu, q_z_t_var, p_z_t_mu, p_z_t_var, reduce=True
             )
 
-            # Set mask
             if mask is not None:
                 _nll_loss_t = _nll_loss_t * mask[:, t]
                 _kl_loss_t = _kl_loss_t * mask[:, t]
 
-            # Accumulate loss
             nll_loss += _nll_loss_t
             kl_loss += _kl_loss_t
 
-        # Multiply beta coefficient
         kl_loss *= beta if self.do_anneal else self.beta
-
-        # Returned loss dict
         loss_dict = {
             "loss": (nll_loss + kl_loss).mean(),
             "nll_loss": nll_loss.mean(),
@@ -238,40 +215,18 @@ class DeepMarkovModel(BaseSequentialVAE):
     def sample(
         self, x: Optional[Tensor] = None, time_steps: int = 0, batch_size: int = 1
     ) -> Tuple[Tensor, ...]:
-        """Reconstructs and samples observations.
 
-        Args:
-            x (torch.Tensor, optional): Observation tensor, size
-                `(b, l, c, h, w)`.
-            time_steps (int, optional): Time step for prediction.
-            batch_size (int, optional): Batch size for samping, used when `x`
-                is `None`.
-
-        Returns:
-            samples (tuple of torch.Tensor): Tuple of reconstructed or sampled
-                data. The first element should be reconstructed observations.
-
-        Raises:
-            ValueError: If `x` is `None` and `time_steps` is non positive.
-        """
-
-        # Data size
         if x is not None:
             batch, recon_len, *_ = x.size()
         else:
             batch = batch_size
             recon_len = 0
 
-        # Total sequence length (reconstruction and sample)
         seq_len = recon_len + time_steps
-
         if seq_len <= 0:
             raise ValueError(f"Sequence length must be positive, but given {seq_len}")
 
-        # Initial parameter
         z_t = self.z_0.repeat(batch, 1)
-
-        # Sampled data
         recon_list = []
         z_list = []
 
@@ -288,11 +243,9 @@ class DeepMarkovModel(BaseSequentialVAE):
             # 2. Decode observations
             recon_t = self.decoder(z_t)
 
-            # Add sampled data to list
             recon_list.append(recon_t)
             z_list.append(z_t)
 
-        # Convert list to tensor, size (l, b, *)
         recon = torch.stack(recon_list)
         z = torch.stack(z_list)
 
