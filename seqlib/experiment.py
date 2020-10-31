@@ -114,7 +114,7 @@ class BaseTrainer:
         sh = logging.StreamHandler()
         sh.setLevel(logging.INFO)
         sh_fmt = logging.Formatter(
-            "%(asctime)s - %(module)s.%(funcName)s " "- %(levelname)s : %(message)s"
+            "%(asctime)s - %(module)s.%(funcName)s - %(levelname)s : %(message)s"
         )
         sh.setFormatter(sh_fmt)
         logger.addHandler(sh)
@@ -122,7 +122,7 @@ class BaseTrainer:
         fh = logging.FileHandler(filename=self._logdir / "training.log")
         fh.setLevel(logging.DEBUG)
         fh_fmt = logging.Formatter(
-            "%(asctime)s - %(module)s.%(funcName)s " "- %(levelname)s : %(message)s"
+            "%(asctime)s - %(module)s.%(funcName)s - %(levelname)s : %(message)s"
         )
         fh.setFormatter(fh_fmt)
         logger.addHandler(fh)
@@ -140,14 +140,14 @@ class BaseTrainer:
         else:
             kwargs = {}
 
-        self._train_loader = dataloader.DataLoader(
+        self._train_loader = dataloader.DataLoader(  # type: ignore
             train_data,
             shuffle=True,
             batch_size=self._config.batch_size,
             **kwargs,  # type: ignore
         )
 
-        self._test_loader = dataloader.DataLoader(
+        self._test_loader = dataloader.DataLoader(  # type: ignore
             test_data,
             shuffle=False,
             batch_size=self._config.batch_size,
