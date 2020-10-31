@@ -1,5 +1,3 @@
-"""Training method."""
-
 import argparse
 import json
 import os
@@ -9,77 +7,66 @@ import random
 import torch
 
 import seqlib
-from experiment import Trainer
 
 
-def main():
+def main() -> None:
 
-    # -------------------------------------------------------------------------
-    # 1. Settings
-    # -------------------------------------------------------------------------
-
-    # Command line args
     args = init_args()
 
-    # Configs
     config_path = pathlib.Path(os.getenv("CONFIG_PATH", "./examples/config.json"))
     with config_path.open() as f:
         config = json.load(f)
 
-    # Path
     logdir = str(pathlib.Path(os.getenv("LOGDIR", "./logs/"), os.getenv("EXPERIMENT_NAME", "tmp")))
     dataset_name = os.getenv("DATASET_NAME", "mnist")
     data_dir = pathlib.Path(os.getenv("DATASET_DIR", "./data/"), dataset_name)
 
-    # Cuda setting
-    use_cuda = torch.cuda.is_available() and args.cuda != "null"
-    gpus = args.cuda if use_cuda else None
+    params = vars(args)
+    args_seed = params.pop("seed")
+    args_cuda = params.pop("cuda")
+    args_model = params.pop("model")
 
-    # Random seed
-    torch.manual_seed(args.seed)
-    random.seed(args.seed)
+    torch.manual_seed(args_seed)
+    random.seed(args_seed)
 
-    # -------------------------------------------------------------------------
-    # 2. Training
-    # -------------------------------------------------------------------------
+    use_cuda = torch.cuda.is_available() and args_cuda != "null"
+    gpus = args_cuda if use_cuda else ""
 
-    # Model
+    params.update(
+        {
+            "logdir": str(logdir),
+            "gpus": gpus,
+        }
+    )
+
     model_dict = {
         "rssm": seqlib.RecurrentSSM,
         "dmm": seqlib.DeepMarkovModel,
     }
-    model = model_dict[args.model](**config[f"{args.model}_params"])
+    model = model_dict[args_model](**config[f"{args_model}_params"])
 
-    # Params
-    params = {
-        "logdir": str(logdir),
-        "gpus": gpus,
-        "data_dir": str(data_dir),
-    }
-    params.update(config)
-    params.update(vars(args))
-
-    # Run trainer
-    trainer = Trainer(model, params)
-    trainer.run()
-
-
-def init_args():
-    parser = argparse.ArgumentParser(description="ML training")
-    parser.add_argument(
-        "--cuda",
-        type=str,
-        default="0",
-        help="Number of CUDA device with comma separation, " "ex. '0,1'. 'null' means cpu device.",
+    train_data = seqlib.SequentialMNIST(
+        root=data_dir, train=True, download=True, **config["dataset_params"]
     )
+    test_data = seqlib.SequentialMNIST(
+        root=data_dir, train=False, download=True, **config["dataset_params"]
+    )
+
+    trainer = seqlib.Trainer(**params)
+    trainer.run(model, train_data, test_data)
+
+
+def init_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="ML training")
+    parser.add_argument("--cuda", type=str, default="0", help="CUDA devices by comma separation.")
     parser.add_argument("--model", type=str, default="rssm", help="Model name.")
     parser.add_argument("--seed", type=int, default=0, help="Random seed.")
     parser.add_argument("--batch-size", type=int, default=4, help="Batch size.")
     parser.add_argument("--max-steps", type=int, default=2, help="Number of gradient steps.")
+    parser.add_argument("--max-grad-value", type=float, default=5.0, help="Clipping value.")
+    parser.add_argument("--max-grad-norm", type=float, default=100.0, help="Clipping norm.")
     parser.add_argument("--test-interval", type=int, default=2, help="Interval steps for testing.")
-    parser.add_argument(
-        "--save-interval", type=int, default=2, help="Interval steps for saving checkpoints."
-    )
+    parser.add_argument("--save-interval", type=int, default=2, help="Interval steps for saving.")
 
     return parser.parse_args()
 

@@ -17,8 +17,5 @@
         "seq_len": 20,
         "color": true,
         "image_name": "china.jpg"
-    },
-    "optimizer_params": {},
-    "max_grad_value": 5.0,
-    "max_grad_norm": 100.0
+    }
 }

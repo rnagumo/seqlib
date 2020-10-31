@@ -1,4 +1,4 @@
-from typing import Dict, DefaultDict, Union, Optional, Any
+from typing import Dict, DefaultDict, Union, Any
 
 import collections
 import dataclasses
@@ -302,7 +302,6 @@ class BaseTrainer:
 
 
 class Trainer(BaseTrainer):
-
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
