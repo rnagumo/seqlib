@@ -1,4 +1,3 @@
-
 """Base class for sequential class."""
 
 from typing import Optional, Tuple, Dict
@@ -26,8 +25,9 @@ class BaseSequentialVAE(nn.Module):
 
         return recon
 
-    def loss_func(self, x: Tensor, mask: Optional[Tensor] = None,
-                  beta: float = 1.0) -> Dict[str, Tensor]:
+    def loss_func(
+        self, x: Tensor, mask: Optional[Tensor] = None, beta: float = 1.0
+    ) -> Dict[str, Tensor]:
         """Loss function.
 
         Args:
@@ -42,8 +42,9 @@ class BaseSequentialVAE(nn.Module):
 
         raise NotImplementedError
 
-    def sample(self, x: Optional[Tensor] = None, time_steps: int = 0,
-               batch_size: int = 1) -> Tuple[Tensor, ...]:
+    def sample(
+        self, x: Optional[Tensor] = None, time_steps: int = 0, batch_size: int = 1
+    ) -> Tuple[Tensor, ...]:
         """Reconstructs and samples observations.
 
         Args:
@@ -64,8 +65,9 @@ class BaseSequentialVAE(nn.Module):
         raise NotImplementedError
 
 
-def kl_divergence_normal(mu0: Tensor, var0: Tensor, mu1: Tensor, var1: Tensor,
-                         reduce: bool = True) -> Tensor:
+def kl_divergence_normal(
+    mu0: Tensor, var0: Tensor, mu1: Tensor, var1: Tensor, reduce: bool = True
+) -> Tensor:
     """Kullback Leibler divergence for 1-D Normal distributions.
 
     p = N(mu0, var0)

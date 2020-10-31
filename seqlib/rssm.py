@@ -1,4 +1,3 @@
-
 """Recurrent State-Space Model (RSSM).
 
 RSSM is also known as Variational RNN.
@@ -24,7 +23,7 @@ class Transition(nn.Module):
         z_dim (int): Dimension size of latent states.
     """
 
-    def __init__(self, h_dim: int, z_dim: int):
+    def __init__(self, h_dim: int, z_dim: int) -> None:
         super().__init__()
 
         self.fz = nn.Linear(z_dim, h_dim)
@@ -54,7 +53,7 @@ class StochasticPrior(nn.Module):
         z_dim (int): Dimension size of latent states.
     """
 
-    def __init__(self, h_dim: int, z_dim: int):
+    def __init__(self, h_dim: int, z_dim: int) -> None:
         super().__init__()
 
         self.fc1 = nn.Linear(h_dim, z_dim)
@@ -86,7 +85,7 @@ class Generator(nn.Module):
         z_dim (int): Dimension size of latent states.
     """
 
-    def __init__(self, x_channels: int, h_dim: int, z_dim: int):
+    def __init__(self, x_channels: int, h_dim: int, z_dim: int) -> None:
         super().__init__()
 
         self.fz = nn.Linear(z_dim, h_dim)
@@ -137,7 +136,7 @@ class Inference(nn.Module):
         z_dim (int): Dimension size of latent states.
     """
 
-    def __init__(self, x_channels: int, h_dim: int, z_dim: int):
+    def __init__(self, x_channels: int, h_dim: int, z_dim: int) -> None:
         super().__init__()
 
         self.conv = nn.Sequential(
@@ -194,8 +193,14 @@ class RecurrentSSM(BaseSequentialVAE):
         do_anneal (bool, optional): If `True`, beta is given from kwargs.
     """
 
-    def __init__(self, x_channels: int = 3, h_dim: int = 10, z_dim: int = 10,
-                 beta: float = 10.0, do_anneal: bool = False):
+    def __init__(
+        self,
+        x_channels: int = 3,
+        h_dim: int = 10,
+        z_dim: int = 10,
+        beta: float = 10.0,
+        do_anneal: bool = False,
+    ) -> None:
         super().__init__()
 
         self.beta = beta
@@ -207,11 +212,14 @@ class RecurrentSSM(BaseSequentialVAE):
         self.encoder = Inference(x_channels, h_dim, z_dim)
 
         # Initial state
+        self.h_0: Tensor
+        self.z_0: Tensor
         self.register_buffer("h_0", torch.zeros(1, h_dim))
         self.register_buffer("z_0", torch.zeros(1, z_dim))
 
-    def loss_func(self, x: Tensor, mask: Optional[Tensor] = None,
-                  beta: float = 1.0) -> Dict[str, Tensor]:
+    def loss_func(
+        self, x: Tensor, mask: Optional[Tensor] = None, beta: float = 1.0
+    ) -> Dict[str, Tensor]:
         """Loss function.
 
         Args:
@@ -253,7 +261,8 @@ class RecurrentSSM(BaseSequentialVAE):
             _nll_loss_t = _nll_loss_t.sum(dim=[1, 2, 3])
 
             _kl_loss_t = kl_divergence_normal(
-                q_z_t_mu, q_z_t_var, p_z_t_mu, p_z_t_var, reduce=True)
+                q_z_t_mu, q_z_t_var, p_z_t_mu, p_z_t_var, reduce=True
+            )
 
             # Set mask
             if mask is not None:
@@ -268,13 +277,17 @@ class RecurrentSSM(BaseSequentialVAE):
         kl_loss *= beta if self.do_anneal else self.beta
 
         # Returned loss dict
-        loss_dict = {"loss": (nll_loss + kl_loss).mean(),
-                     "nll_loss": nll_loss.mean(), "kl_loss": kl_loss.mean()}
+        loss_dict = {
+            "loss": (nll_loss + kl_loss).mean(),
+            "nll_loss": nll_loss.mean(),
+            "kl_loss": kl_loss.mean(),
+        }
 
         return loss_dict
 
-    def sample(self, x: Optional[Tensor] = None, time_steps: int = 0,
-               batch_size: int = 1) -> Tuple[Tensor, ...]:
+    def sample(
+        self, x: Optional[Tensor] = None, time_steps: int = 0, batch_size: int = 1
+    ) -> Tuple[Tensor, ...]:
         """Reconstructs and samples observations.
 
         Args:
@@ -303,8 +316,7 @@ class RecurrentSSM(BaseSequentialVAE):
         seq_len = recon_len + time_steps
 
         if seq_len <= 0:
-            raise ValueError(
-                f"Sequence length must be positive, but given {seq_len}")
+            raise ValueError(f"Sequence length must be positive, but given {seq_len}")
 
         # Initial parameter
         h_t = self.h_0.repeat(batch, 1)
@@ -321,6 +333,7 @@ class RecurrentSSM(BaseSequentialVAE):
 
             # 2. Sample stochastic latents
             if t < recon_len:
+                assert x is not None
                 z_t_mu, z_t_var = self.encoder(x[:, t], h_t)
             else:
                 z_t_mu, z_t_var = self.prior(h_t)
