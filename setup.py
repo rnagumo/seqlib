@@ -1,4 +1,3 @@
-
 from setuptools import setup, find_packages
 
 
@@ -10,11 +9,16 @@ install_requires = [
 
 
 extras_require = {
-    "testing": ["pytest"],
-    "example": [
+    "training": [
         "matplotlib>=3.2",
         "tqdm>=4.47",
         "tensorboardX>=2.1",
+    ],
+    "dev": [
+        "pytest",
+        "black",
+        "flake8",
+        "mypy==0.790",
     ],
 }
 
