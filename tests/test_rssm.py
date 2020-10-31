@@ -1,10 +1,9 @@
-
 import pytest
 
 import torch
 import seqlib
 
-    
+
 def test_loss_func() -> None:
     x_channels = 3
     h_dim = 5
