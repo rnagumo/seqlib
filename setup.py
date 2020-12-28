@@ -1,5 +1,4 @@
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 install_requires = [
     "torch>=1.6",
@@ -17,6 +16,7 @@ extras_require = {
     "dev": [
         "pytest",
         "black",
+        "isort",
         "flake8",
         "mypy==0.790",
     ],
@@ -25,7 +25,7 @@ extras_require = {
 
 setup(
     name="seqlib",
-    version="0.2",
+    version="0.3",
     description="2D sequential models in PyTorch",
     packages=find_packages(),
     install_requires=install_requires,

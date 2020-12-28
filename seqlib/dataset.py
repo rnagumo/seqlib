@@ -4,13 +4,11 @@ Ref)
 https://github.com/davidtellez/contrastive-predictive-coding/blob/master/data_utils.py
 """
 
-from typing import List, Tuple, Any
-
-from PIL import Image
-
-from sklearn.datasets import load_sample_image
+from typing import Any, List, Tuple
 
 import torch
+from PIL import Image
+from sklearn.datasets import load_sample_image
 from torch import Tensor
 from torchvision import datasets, transforms
 
