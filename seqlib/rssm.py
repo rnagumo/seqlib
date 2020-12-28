@@ -6,7 +6,7 @@ ref)
 * Chung+ 2015, "A Recurrent Latent Variable Model for Sequential Data"
 """
 
-from typing import Tuple, Optional, Dict
+from typing import Dict, Optional, Tuple
 
 import torch
 from torch import Tensor, nn

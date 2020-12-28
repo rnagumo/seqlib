@@ -1,5 +1,4 @@
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 install_requires = [
     "torch>=1.6",
@@ -17,6 +16,7 @@ extras_require = {
     "dev": [
         "pytest",
         "black",
+        "isort",
         "flake8",
         "mypy==0.790",
     ],

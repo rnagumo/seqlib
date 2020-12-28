@@ -5,7 +5,7 @@ ref)
 * Krishnan+ 2016, "Structured Inference Networks for Nonlinear State Space Models"
 """
 
-from typing import Tuple, Optional, Dict
+from typing import Dict, Optional, Tuple
 
 import torch
 from torch import Tensor, nn

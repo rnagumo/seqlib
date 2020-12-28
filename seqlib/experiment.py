@@ -1,5 +1,3 @@
-from typing import Dict, DefaultDict, Union, Any
-
 import collections
 import dataclasses
 import json
@@ -7,9 +5,10 @@ import logging
 import os
 import pathlib
 import time
+from typing import Any, DefaultDict, Dict, Union
 
 import torch
-from torch import Tensor, optim, nn
+from torch import Tensor, nn, optim
 from torch.optim import optimizer
 from torch.utils.data import dataloader
 from torch.utils.data.dataset import Dataset

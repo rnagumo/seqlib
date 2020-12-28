@@ -1,6 +1,6 @@
 import pytest
-
 import torch
+
 import seqlib
 
 
